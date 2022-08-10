@@ -1,9 +1,7 @@
-let jsonFile = "static/data/samples.json"
-
 function init() {
   var selector = d3.select("#selDataset");
 
-  d3.json(jsonFile).then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
     console.log(data);    
     var sampleNames = data.names;
 
@@ -13,11 +11,10 @@ function init() {
         .text(sample)
         .property("value", sample);
     });
+    console.log(sampleNames);
 
     var firstSample = sampleNames[0];
       buildBarChart(firstSample);
-      buildBubbleChart(firstSample);
-      buildGaugeChart(firstSample);
       buildMetadata(firstSample);
   });
 
@@ -28,34 +25,31 @@ init();
 function optionChanged(newSample) {
   buildMetadata(newSample);
   buildBarChart(newSample);
-  buildBubbleChart(newSample);
-  buildGaugeChart(newSample);
-
 }
 
 function buildMetadata(sample) {
 // Use `d3.json` to fetch the sample data for the plots
-  d3.json(jsonFile).then((data) => {
-    var metaData = data.metaData;
+  d3.json("static/data/samples.json").then((data) => {
+    var metadata = data.metadata;
     var resultArray = metaData.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
     var PANEL = d3.select("#sample-metadata");
 
     PANEL.html("");
     Object.entries(result).forEach(([key, value]) => {
-      d3.select("#sample-metadata")
-      .append("h5").text('${key}: ${value}');
+      PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`);
     });
   });
 }
 
 function buildBarChart(sample) {
-  d3.json(jsonFile).then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
       var samples = data.samples;
       var sample_data = samples.filter(x => x.id == sample);
-      console.log(sample_data);
 
-      sample_data = sample_data[0];
+      // console.log(sample_data);
+
+      var sample_data = sample_data[0];
 
       var otu_ids = sample_data.otu_ids;
       var otu_labels = sample_data.otu_labels;
@@ -84,7 +78,7 @@ function buildBarChart(sample) {
 }
 
 function buildGaugeChart(sample) {
-  d3.json(jsonFile).then((data) => {
+  d3.json("static/data/samples.json").then((data) => {
       var metadata = data.metadata;
       var metadata_data = metadata.filter(x => x.id == sample);
       metadata_data = metadata_data[0];
